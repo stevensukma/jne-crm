@@ -13,6 +13,7 @@ import ComponentsOverview from "./views/ComponentsOverview";
 import Tables from "./views/Tables";
 import BlogPosts from "./views/BlogPosts";
 import CRM from "./views/CRM";
+import CRMDetail from "./views/CRMDetail";
 
 export default [
   {
@@ -55,6 +56,11 @@ export default [
     path: "/blog-posts",
     layout: DefaultLayout,
     component: BlogPosts
+  },
+  {
+    path: "/crm/:customerId",
+    layout: DefaultLayout,
+    component: CRMDetail,
   },
   {
     path: "/crm",

@@ -1,109 +1,111 @@
 import React from "react";
-import { Container, Row, Col, Card, CardHeader, CardBody } from "shards-react";
+import { Container, Row, Col, Card, CardHeader, CardBody, Button } from "shards-react";
+import ReactTable from 'react-table';
+import styled from 'styled-components';
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 import PageTitle from "../components/common/PageTitle";
+import 'react-table/react-table.css'
 
-const dummyData = [
-  {
-    firstName: "Joseph",
-    lastName: "Salimin",
-    country: "Indonesia",
-    city: "Jakarta",
-    phone: "081212127878"
-  }, {
-    firstName: "Joseph",
-    lastName: "Salimin",
-    country: "Indonesia",
-    city: "Jakarta",
-    phone: "081212127878"
-  }
-]
-
-const CRM = () => {
-  const renderHeader = () => {
+const columns = [{
+  Header: '#',
+  accessor: 'id',
+  maxWidth: 50
+}, {
+  Header: 'Name',
+  accessor: 'accountName'
+}, {
+  Header: 'Customer Type',
+  accessor: 'customerType',
+}, {
+  Header: 'Phone',
+  accessor: 'phoneNumber',
+}, {
+  Header: 'Email',
+  accessor: 'email'
+}, {
+  Header: 'Actions',
+  id: 'click-me-button',
+  Cell: (d) => {
     return (
-      <thead className="bg-light">
-        <tr>
-          <th scope="col" className="border-0">
-            #
-          </th>
-          <th scope="col" className="border-0">
-            First Name
-          </th>
-          <th scope="col" className="border-0">
-            Last Name
-          </th>
-          <th scope="col" className="border-0">
-            Country
-          </th>
-          <th scope="col" className="border-0">
-            City
-          </th>
-          <th scope="col" className="border-0">
-            Phone
-          </th>
-        </tr>
-      </thead>
+      <Link to={`/crm/${d.original.id}`}>
+        <Button theme="primary" className="mb-2 mr-1 text-center">
+          <i className="material-icons mr-1">search</i>
+        </Button>
+      </Link>
     )
   }
+}]
 
-  const renderRow = (item, idx) => {
-    return (
-      <tr>
-        <td>{idx}</td>
-        <td>{item.firstName}</td>
-        <td>{item.lastName}</td>
-        <td>{item.country}</td>
-        <td>{item.city}</td>
-        <td>{item.phone}</td>
-      </tr>
-    )
+const TableWrapper = styled.div`
+  padding: 20px;
+`
+
+class CRM extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: []
+    }
   }
 
-  const renderBody = (data) => {
-    return (
-      <tbody>
-        {
-          data.map((item, idx) => {
-            return (
-              renderRow(item, idx + 1)
-            )
-          })
-        }
-      </tbody>
-    )
+  getCustomers = async() => {
+    try {
+      const response = await axios.get("http://23.97.61.221:5000/customer");
+      if (response.data) {
+        this.setState({
+          data: response.data,
+        })
+      }
+    } catch(err) {
+      console.log(err)
+    }
   }
 
-  return (
-    <Container fluid className="main-content-container px-4">
-      {/* Page Header */}
-      <Row noGutters className="page-header py-4">
-        <PageTitle
-          sm="4"
-          title="Customer Relationship Management"
-          subtitle="JNE 360"
-          className="text-sm-left"
-        />
-      </Row>
+  componentDidMount() {
+    this.getCustomers();
+  }
 
-      {/* Default Light Table */}
-      <Row>
-        <Col>
-          <Card small className="mb-4">
-            <CardHeader className="border-bottom">
-              <h6 className="m-0">Active Users</h6>
-            </CardHeader>
-            <CardBody className="p-0 pb-3">
-              <table className="table mb-0">
-                {renderHeader()}
-                {renderBody(dummyData)}
-              </table>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
-  );
+  render() {
+    console.log(this.state.data)
+    return (
+      <Container fluid className="main-content-container px-4">
+        {/* Page Header */}
+        <Row noGutters className="page-header py-4">
+          <PageTitle
+            sm="4"
+            title="Customer Relationship Management"
+            subtitle="JNE 360"
+            className="text-sm-left"
+          />
+        </Row>
+
+        {/* Default Light Table */}
+          <Row>
+            <Col>
+              <Card small className="mb-4">
+                <TableWrapper>
+                  <CardHeader className="border-bottom">
+                    <h6 className="m-0">Active Users</h6>
+                  </CardHeader>
+                  <CardBody className="p-0 pb-3">
+                    <ReactTable
+                      className="p-0"
+                      data={this.state.data}
+                      columns={columns}
+                      defaultPageSize={10}
+                    />
+                  </CardBody>
+                </TableWrapper>
+              </Card>
+            </Col>
+          </Row>
+        {/* </TableWrapper> */}
+      </Container>
+    );
+  }
 };
 
 export default CRM;
