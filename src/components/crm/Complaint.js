@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import moment from "moment";
 
 const Bubble = styled.div`
   background-color: #007bff;
@@ -24,17 +25,23 @@ const TimeText = styled.div`
   text-align: right;
 `
 
-const Complaint = (props) => {
-  return (
-    <div>
-      <ChatCreator>Customer Twitter</ChatCreator>
-      <Bubble>
-        {/* <ChatTitle>Judul Complaint</ChatTitle> */}
-        <div>Lorem ipsum huyu tetapi jmemang barangnya udah rusak nih soalnya gak bisa bisa diidupin karena baterainya abis tapi abis baterainya dipasang masih gak bisa ternyata memang baterainya beda ukuran doang tapi gak bisa juga gimana sih</div>
-      </Bubble>
-      <TimeText>13 November 2019 18:45</TimeText>
-    </div>
-  )
+class Complaint extends React.Component{
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return (
+      <div>
+        <ChatCreator>{`${this.props.data.handledBy ? this.props.data.handledBy.accountName : "Customer"} - ${this.props.data.media}`}</ChatCreator>
+        <Bubble>
+          {/* <ChatTitle>Judul Complaint</ChatTitle> */}
+          <div>{this.props.data.content}</div>
+        </Bubble>
+        <TimeText>{moment(parseInt(this.props.data.createdAt)).format("DD MMM YYYY, h:mm:ss")}</TimeText>
+      </div>
+    )
+  }
 }
 
 export default Complaint;

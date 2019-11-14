@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container, Row, Col, Card, CardHeader, CardBody } from "shards-react";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import styled from "styled-components";
@@ -48,11 +48,18 @@ class CRMDetail extends React.Component {
     this.state = {
       modal: false,
       data: {},
+      chatInput: "",
     }
   }
 
   componentDidMount() {
     this.getCustomers();
+  }
+
+  onChangeChatInput = (e) => {
+    this.setState({
+      chatInput: e.target.value,
+    })
   }
 
   getCustomers = async() => {
@@ -71,10 +78,26 @@ class CRMDetail extends React.Component {
     }
   }
 
-  toggle = ()  => {
-    this.setState({
-      modal: !this.state.modal,
-    })
+  sendChat = async() => {
+    try {
+      const response = await axios.post(
+        "http://23.97.61.221:5000/timeline/response",
+        {
+          title: "",
+          content: this.state.chatInput,
+          userID: 1,
+          handledBy: 2,
+        }
+      )
+
+      this.setState({
+        chatInput: "",
+      })
+
+      this.getCustomers()
+    } catch(err) {
+      console.log(err)
+    }
   }
 
   renderSummary = (data) => {
@@ -148,25 +171,31 @@ class CRMDetail extends React.Component {
                     </TabList>
                     <TabPanel>
                       <ComplaintWrapper>
-                        <Complaint/>
-                        <Complaint/>
-                        <Complaint/>
-                        <Complaint/>
-                        <Complaint/>
-                        <Complaint/>
+                        {
+                          this.state.data.complaints && this.state.data.complaints.map((item) => {
+                            return (
+                              <Complaint data={item}/>
+                            )
+                          })
+                        }
                       </ComplaintWrapper>
                       <div>
-                        <ChatInput type={"text"}/>
-                        <i style={{ fontSize: "2rem"}}className="material-icons">send</i>
+                        <ChatInput value={this.state.chatInput} onChange={this.onChangeChatInput} type={"text"}/>
+                        <i onClick={this.sendChat} style={{ fontSize: "2rem"}}className="material-icons">send</i>
                       </div>
                     </TabPanel>
                     <TabPanel>
-                      <Transaction onShowMore={this.toggle}/>
-                      <Transaction onShowMore={this.toggle}/>
+                      {
+                        this.state.data.receipts && this.state.data.receipts.map((item) => {
+                          return(
+                            <Transaction data={item} onShowMore={this.toggle}/>
+                          )
+                        })
+                      }
                     </TabPanel>
                     <TabPanel>
-                      <Insurance onShowMore={this.toggle}/>
-                      <Insurance onShowMore={this.toggle}/>
+                      <Insurance/>
+                      <Insurance/>
                     </TabPanel>
                   </Tabs>
                 </CardContent>
@@ -174,39 +203,6 @@ class CRMDetail extends React.Component {
             </Card>
           </Col>
         </Row>
-        <Modal
-          isOpen={this.state.modal}
-        >
-          <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
-          <ModalBody>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Keterangan</th>
-                  <th>Bukti</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">30-08-2019 20:13</th>
-                  <td>SHIPMENT RECEIVED BY JNE COUNTER OFFICER AT [JAKARTA]</td>
-                  <td><img src={"https://via.placeholder.com/150"}/></td>
-                </tr>
-                <tr>
-                  <th scope="row">30-08-2019 23:57</th>
-                  <td>SHIPMENT PICKED UP BY JNE COURIER [JAKARTA]</td>
-                  <td><img src={"https://via.placeholder.com/150"}/></td>
-                </tr>
-                <tr>
-                  <th scope="row">31-08-2019 05:38</th>
-                  <td>RECEIVED AT ORIGIN GATEWAY [JAKARTA]</td>
-                  <td><img src={"https://via.placeholder.com/150"}/></td>
-                </tr>
-              </tbody>
-            </Table>
-          </ModalBody>
-        </Modal>
       </Container>
     )
   }
