@@ -68,6 +68,14 @@ class CRMDetail extends React.Component {
       if (response.data) {
         for (let i = 0; i < response.data.length; i++) {
           if (response.data[i]["id"] == this.props.match.params.customerId) {
+            response.data[i] = {
+              ...response.data[i],
+              postalCode: "40134",
+              city: "Kota Bandung",
+              province: "Jawa Barat",
+            }
+            console.log("sladkfjasl;fdk")
+            console.log(response.data[i])
             this.setState({ data: response.data[i] });
             break;
           }
@@ -110,6 +118,18 @@ class CRMDetail extends React.Component {
         <Row style={{paddingBottom: "6px"}}>
           <Col style={{fontWeight: "700", color: "#bbb"}}>Alamat</Col>
           <Col>{data.address}</Col>
+        </Row>
+        <Row style={{paddingBottom: "6px"}}>
+          <Col style={{fontWeight: "700", color: "#bbb"}}>Kode Pos</Col>
+          <Col>{data.postalCode}</Col>
+        </Row>
+        <Row style={{paddingBottom: "6px"}}>
+          <Col style={{fontWeight: "700", color: "#bbb"}}>Kabupaten/Kota</Col>
+          <Col>{data.city}</Col>
+        </Row>
+        <Row style={{paddingBottom: "6px"}}>
+          <Col style={{fontWeight: "700", color: "#bbb"}}>Provinsi</Col>
+          <Col>{data.province}</Col>
         </Row>
         <Row style={{paddingBottom: "6px"}}>
           <Col style={{fontWeight: "700", color: "#bbb"}}>Customer Type</Col>
@@ -170,6 +190,10 @@ class CRMDetail extends React.Component {
                       <Tab>Insurance Claims</Tab>
                     </TabList>
                     <TabPanel>
+                      <div>
+                        <ChatInput value={this.state.chatInput} onChange={this.onChangeChatInput} type={"text"}/>
+                        <i onClick={this.sendChat} style={{ fontSize: "2rem"}}className="material-icons">send</i>
+                      </div>
                       <ComplaintWrapper>
                         {
                           this.state.data.complaints && this.state.data.complaints.map((item) => {
@@ -179,23 +203,26 @@ class CRMDetail extends React.Component {
                           })
                         }
                       </ComplaintWrapper>
-                      <div>
-                        <ChatInput value={this.state.chatInput} onChange={this.onChangeChatInput} type={"text"}/>
-                        <i onClick={this.sendChat} style={{ fontSize: "2rem"}}className="material-icons">send</i>
-                      </div>
                     </TabPanel>
                     <TabPanel>
                       {
                         this.state.data.receipts && this.state.data.receipts.map((item) => {
                           return(
-                            <Transaction data={item} onShowMore={this.toggle}/>
+                            <Transaction data={item}/>
                           )
                         })
                       }
                     </TabPanel>
                     <TabPanel>
-                      <Insurance/>
-                      <Insurance/>
+                      {
+                        this.state.data.claims && this.state.data.claims.map((item) => {
+                          console.log("huuuuuuuuusaldjkfhalksjfkakasjdlfajsfdklj")
+                          console.log(item)
+                          return(
+                            <Insurance data={item}/>
+                          )
+                        })
+                      }
                     </TabPanel>
                   </Tabs>
                 </CardContent>

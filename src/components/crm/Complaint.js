@@ -9,6 +9,13 @@ const Bubble = styled.div`
   border-radius: 5px;
 `
 
+const AnotherBubble = styled.div`
+  background-color: #ddd;
+  padding: 10px 20px;
+  color: #000;
+  border-radius: 5px;
+`
+
 const ChatCreator = styled.div`
   font-size: 1.1rem;
   font-weight: 700;
@@ -30,15 +37,38 @@ class Complaint extends React.Component{
     super(props)
   }
 
+  generateDataContent = (score) => {
+    if (score < 0.4) {
+      return "Negative"
+    } else if (score < 0.6) {
+      return "Neutral"
+    } else {
+      return "Positive"
+    }
+  }
+
   render() {
+    console.log(this.props.data.handledBy)
     return (
       <div>
-        <ChatCreator>{`${this.props.data.handledBy ? this.props.data.handledBy.accountName : "Customer"} - ${this.props.data.media}`}</ChatCreator>
-        <Bubble>
-          {/* <ChatTitle>Judul Complaint</ChatTitle> */}
-          <div>{this.props.data.content}</div>
-        </Bubble>
-        <TimeText>{moment(parseInt(this.props.data.createdAt)).format("DD MMM YYYY, h:mm:ss")}</TimeText>
+        <ChatCreator>{`${this.props.data.handledBy ? "Arief Rahardjo" : "Customer"} via ${this.props.data.media}`}</ChatCreator>
+        {
+          this.props.data.handledBy ? (
+            <AnotherBubble>
+              {/* <ChatTitle>Judul Complaint</ChatTitle> */}
+              <div>{this.props.data.content}</div>
+            </AnotherBubble>
+           ) : (
+            <Bubble>
+              {/* <ChatTitle>Judul Complaint</ChatTitle> */}
+              <div>{this.props.data.content}</div>
+            </Bubble>
+          )
+        }
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+          <TimeText>{this.props.data.sentiment ? `${this.generateDataContent(this.props.data.sentiment)}, score: ${this.props.data.sentiment.toFixed(3)}` : ''}</TimeText>
+          <TimeText>{moment(parseInt(this.props.data.createdAt)).format("DD MMM YYYY, h:mm:ss")}</TimeText>
+        </div>
       </div>
     )
   }

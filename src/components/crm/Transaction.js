@@ -51,7 +51,7 @@ class Transaction extends React.Component{
         <Modal
           isOpen={this.state.modal}
         >
-          <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+          <ModalHeader toggle={this.toggle}>Tracking</ModalHeader>
           <ModalBody>
             <Table>
               <thead>

@@ -58,7 +58,7 @@ export default [
     component: BlogPosts
   },
   {
-    path: "/crm/:customerId",
+    path: "/crm-detail/:customerId",
     layout: DefaultLayout,
     component: CRMDetail,
   },

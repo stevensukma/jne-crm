@@ -29,7 +29,7 @@ const columns = [{
   id: 'click-me-button',
   Cell: (d) => {
     return (
-      <Link to={`/crm/${d.original.id}`}>
+      <Link to={`/crm-detail/${d.original.id}`}>
         <Button theme="primary" className="mb-2 mr-1 text-center">
           <i className="material-icons mr-1">search</i>
         </Button>
